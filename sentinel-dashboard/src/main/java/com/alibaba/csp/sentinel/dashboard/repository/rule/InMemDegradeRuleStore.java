@@ -15,10 +15,7 @@
  */
 package com.alibaba.csp.sentinel.dashboard.repository.rule;
 
-import java.util.concurrent.atomic.AtomicLong;
-
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.DegradeRuleEntity;
-
 import org.springframework.stereotype.Component;
 
 /**
@@ -27,10 +24,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class InMemDegradeRuleStore extends InMemoryRuleRepositoryAdapter<DegradeRuleEntity> {
 
+    // by zhengxgs @使用父类的,改用Snowflake生成全局唯一ID
+
+    /*
     private static AtomicLong ids = new AtomicLong(0);
 
     @Override
     protected long nextId() {
         return ids.incrementAndGet();
     }
+    */
 }

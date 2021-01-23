@@ -15,14 +15,16 @@
  */
 package com.alibaba.csp.sentinel.dashboard.repository.rule;
 
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.RuleEntity;
+import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
+import com.alibaba.csp.sentinel.dashboard.repository.uniqueid.IdGenerator;
+import com.alibaba.csp.sentinel.util.AssertUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-
-import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.RuleEntity;
-import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
-import com.alibaba.csp.sentinel.util.AssertUtil;
 
 /**
  * @author leyou
@@ -38,6 +40,9 @@ public abstract class InMemoryRuleRepositoryAdapter<T extends RuleEntity> implem
     private Map<String, Map<Long, T>> appRules = new ConcurrentHashMap<>(16);
 
     private static final int MAX_RULES_SIZE = 10000;
+
+    @Autowired
+    private IdGenerator<Long> idGenerator;
 
     @Override
     public T save(T entity) {
@@ -125,5 +130,15 @@ public abstract class InMemoryRuleRepositoryAdapter<T extends RuleEntity> implem
      *
      * @return next unused id
      */
-    abstract protected long nextId();
+    // abstract protected long nextId();
+    /**
+     * 去掉原来抽象方法,改用Snowflake生成全局唯一ID,删除子类方法
+     * @Author zhengxgs
+     * @Date 2021/1/23 11:31
+     * @param
+     * @return long
+     **/
+    protected long nextId() {
+        return idGenerator.nextId();
+    }
 }

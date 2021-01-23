@@ -15,19 +15,17 @@
  */
 package com.alibaba.csp.sentinel.dashboard.config;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
-
 import com.alibaba.csp.sentinel.adapter.servlet.CommonFilter;
 import com.alibaba.csp.sentinel.adapter.servlet.callback.WebCallbackManager;
 import com.alibaba.csp.sentinel.dashboard.auth.AuthorizationInterceptor;
 import com.alibaba.csp.sentinel.dashboard.auth.LoginAuthenticationFilter;
+import com.alibaba.csp.sentinel.dashboard.repository.uniqueid.IdGenerator;
+import com.alibaba.csp.sentinel.dashboard.repository.uniqueid.SnowflakeIdGenerator;
 import com.alibaba.csp.sentinel.util.StringUtil;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,6 +36,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.Filter;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author leyou
@@ -112,5 +113,18 @@ public class WebConfig implements WebMvcConfigurer {
         registration.setName("authenticationFilter");
         registration.setOrder(0);
         return registration;
+    }
+
+    /**
+     * snowflake算法生成唯一ID
+     * @Author zhengxgs
+     * @Date 2021/1/23 11:24
+     * @param dataCenterId data center id
+     * @param workerId worker id
+     * @return IdGenerator<Long>
+     **/
+    @Bean
+    public IdGenerator<Long> snowflakeIdGenerator(@Value("${id.dataCenterId:0}") long dataCenterId, @Value("${id.workerId:0}") long workerId) {
+        return new SnowflakeIdGenerator(dataCenterId, workerId);
     }
 }
