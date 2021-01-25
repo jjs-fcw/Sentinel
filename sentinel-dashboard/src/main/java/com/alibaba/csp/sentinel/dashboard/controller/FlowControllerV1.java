@@ -29,6 +29,7 @@ import com.alibaba.csp.sentinel.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -143,6 +144,10 @@ public class FlowControllerV1 {
         Result<FlowRuleEntity> checkResult = checkEntityInternal(entity);
         if (checkResult != null) {
             return checkResult;
+        }
+        if (CollectionUtils.isEmpty(repository.findAllByApp(entity.getApp()))) {
+            // fix bug: 临时解决控制台重启后内存数据丢失问题
+            fillMemoryForEmpty(entity);
         }
         entity.setId(null);
         Date date = new Date();
@@ -293,5 +298,19 @@ public class FlowControllerV1 {
     private void publishRules_persistence(/*@NonNull*/ String app) throws Exception {
         List<FlowRuleEntity> rules = repository.findAllByApp(app);
         persistentApiClient.publish(app, RuleConfigTypeEnum.FLOW, rules);
+    }
+
+    private void fillMemoryForEmpty(FlowRuleEntity entity) {
+        try {
+            List<FlowRuleEntity> rules;
+            if(persistentApiClient instanceof MemoryApiClient){
+                rules = sentinelApiClient.fetchFlowRuleOfMachine(entity.getApp(), entity.getIp(), entity.getPort());
+            } else {
+                rules = persistentApiClient.fetch(entity.getApp(), RuleConfigTypeEnum.FLOW);
+            }
+            repository.saveAll(rules);
+        } catch (Exception e) {
+            logger.error("fetch rules all error:", e);
+        }
     }
 }
