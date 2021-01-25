@@ -31,6 +31,7 @@ import com.alibaba.csp.sentinel.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -90,6 +91,10 @@ public class DegradeController {
         Result<DegradeRuleEntity> checkResult = checkEntityInternal(entity);
         if (checkResult != null) {
             return checkResult;
+        }
+        if (CollectionUtils.isEmpty(repository.findAllByApp(entity.getApp()))) {
+            // fix bug: 临时解决控制台重启后内存数据丢失问题
+            fillMemoryForEmpty(entity);
         }
         Date date = new Date();
         entity.setGmtCreate(date);
@@ -205,6 +210,20 @@ public class DegradeController {
     private boolean publishRules_persistence(/*@NonNull*/ String app) {
         List<DegradeRuleEntity> rules = repository.findAllByApp(app);
         return persistentApiClient.publishReturnBoolean(app, RuleConfigTypeEnum.DEGRADE, rules);
+    }
+
+    private void fillMemoryForEmpty(DegradeRuleEntity entity) {
+        try {
+            List<DegradeRuleEntity> rules = new ArrayList<>();
+            if(persistentApiClient instanceof MemoryApiClient) {
+                rules = sentinelApiClient.fetchDegradeRuleOfMachine(entity.getApp(), entity.getIp(), entity.getPort());
+            } else {
+                rules = persistentApiClient.fetch(entity.getApp(), RuleConfigTypeEnum.DEGRADE);
+            }
+            repository.saveAll(rules);
+        } catch (Exception e) {
+            logger.error("fetch rules all error:", e);
+        }
     }
 
     private <R> Result<R> checkEntityInternal(DegradeRuleEntity entity) {
