@@ -78,6 +78,12 @@
             <artifactId>mockito-core</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>io.envoyproxy.controlplane</groupId>
+            <artifactId>server</artifactId>
+            <version>0.1.23</version>
+        </dependency>
     </dependencies>
 
     <build>
