@@ -145,9 +145,7 @@ public class WebConfig implements WebMvcConfigurer {
         simpleModule.addSerializer(Long.TYPE, ToStringSerializer.instance);
 
         for (HttpMessageConverter<?> converter : converters) {
-            System.out.println(converter);
             if (converter instanceof MappingJackson2HttpMessageConverter) {
-                System.out.println(converter + ": 处理long丢失精度");
                 MappingJackson2HttpMessageConverter jackson2HttpMessageConverter = (MappingJackson2HttpMessageConverter) converter;
                 ObjectMapper objectMapper = jackson2HttpMessageConverter.getObjectMapper();
                 objectMapper.registerModule(simpleModule);
