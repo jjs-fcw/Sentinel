@@ -4,7 +4,6 @@ import com.alibaba.csp.sentinel.dashboard.datasource.RuleConfigTypeEnum;
 import com.alibaba.csp.sentinel.dashboard.rule.AbstractpersistentRuleApiClient;
 import com.alibaba.csp.sentinel.util.AssertUtil;
 import com.alibaba.fastjson.JSON;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.curator.framework.CuratorFramework;
 import org.apache.zookeeper.CreateMode;
 import org.apache.zookeeper.data.Stat;
@@ -24,8 +23,7 @@ public class ZookeeperApiClient<T> extends AbstractpersistentRuleApiClient<T> {
     private CuratorFramework zkClient;
 
     public String getRuleConfigId(String appName, RuleConfigTypeEnum ruleFix) {
-        appName = StringUtils.isBlank(appName) ? "Sentinel" : appName;
-        return String.format("/%s/%s", appName, ruleFix.getValue());
+        return String.format("/sentinel/%s/%s-%s", appName, appName, ruleFix.getValue());
     }
 
     @Override
@@ -58,5 +56,4 @@ public class ZookeeperApiClient<T> extends AbstractpersistentRuleApiClient<T> {
         byte[] data = (rules == null || CollectionUtils.isEmpty((Collection<?>) rules)) ? "[]".getBytes() : JSON.toJSONString(rules,true).getBytes();
         zkClient.setData().forPath(path, data);
     }
-
 }

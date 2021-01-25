@@ -10,13 +10,13 @@ import com.alibaba.csp.sentinel.dashboard.datasource.entity.rule.*;
  */
 public enum RuleConfigTypeEnum {
 
-    FLOW("sentinel-flow-rules", FlowRuleEntity.class),
-    PARAM_FLOW("sentinel-param-rules", ParamFlowRuleEntity.class),
-    AUTHORITY("sentinel-authority-rules", AuthorityRuleEntity.class),
-    DEGRADE("sentinel-degrade-rules", DegradeRuleEntity.class),
-    SYSTEM("sentinel-system-rules", SystemRuleEntity.class),
-    GATEWAY_FLOW("sentinel-gateway-flow-rules", GatewayFlowRuleEntity.class),
-    GATEWAY_PARAM_FLOW("sentinel-gateway-param-flow-rules", GatewayParamFlowItemEntity.class);
+    FLOW("flow-rules", FlowRuleEntity.class),
+    PARAM_FLOW("param-rules", ParamFlowRuleEntity.class),
+    AUTHORITY("authority-rules", AuthorityRuleEntity.class),
+    DEGRADE("degrade-rules", DegradeRuleEntity.class),
+    SYSTEM("system-rules", SystemRuleEntity.class),
+    GATEWAY_FLOW("gateway-flow-rules", GatewayFlowRuleEntity.class),
+    GATEWAY_PARAM_FLOW("gateway-param-flow-rules", GatewayParamFlowItemEntity.class);
 
 //    CLUSTER("sentinel-cluster-map"),
 //    CLIENT_CONFIG("sentinel-cluster-client-config"),
