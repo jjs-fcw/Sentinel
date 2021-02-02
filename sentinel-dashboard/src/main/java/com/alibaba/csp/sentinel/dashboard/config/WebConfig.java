@@ -22,9 +22,6 @@ import com.alibaba.csp.sentinel.dashboard.auth.LoginAuthenticationFilter;
 import com.alibaba.csp.sentinel.dashboard.repository.uniqueid.IdGenerator;
 import com.alibaba.csp.sentinel.dashboard.repository.uniqueid.SnowflakeIdGenerator;
 import com.alibaba.csp.sentinel.util.StringUtil;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.module.SimpleModule;
-import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,15 +29,15 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.converter.HttpMessageConverter;
-import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.web.servlet.config.annotation.*;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.Filter;
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -138,6 +135,7 @@ public class WebConfig implements WebMvcConfigurer {
      * @param converters
      * @return void
      **/
+    /*
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
         SimpleModule simpleModule = new SimpleModule();
@@ -152,4 +150,5 @@ public class WebConfig implements WebMvcConfigurer {
             }
         }
     }
+    */
 }

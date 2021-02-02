@@ -15,15 +15,18 @@
  */
 package com.alibaba.csp.sentinel.dashboard.datasource.entity.rule;
 
-import java.util.Date;
-
 import com.alibaba.csp.sentinel.slots.block.Rule;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
+
+import java.util.Date;
 
 /**
  * @author leyou
  */
 public interface RuleEntity {
 
+    @JsonSerialize(using = ToStringSerializer.class)
     Long getId();
 
     void setId(Long id);
