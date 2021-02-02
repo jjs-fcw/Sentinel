@@ -14,7 +14,7 @@ app.controller('IdentityCtl', ['$scope', '$stateParams', 'IdentityService',
     $scope.totalCount = 0;
     $scope.identities = [];
     // 数据自动刷新频率, 默认10s
-    var DATA_REFRESH_INTERVAL = 30;
+    var DATA_REFRESH_INTERVAL = 2;
 
     $scope.isExpand = true;
     $scope.searchKey = '';
@@ -436,11 +436,11 @@ app.controller('IdentityCtl', ['$scope', '$stateParams', 'IdentityService',
 
     var intervalId;
     function reInitIdentityDatas() {
-      // $interval.cancel(intervalId);
+      $interval.cancel(intervalId);
       queryIdentities();
-      // intervalId = $interval(function () {
-      //    queryIdentities();
-      // }, DATA_REFRESH_INTERVAL * 1000);
+      intervalId = $interval(function () {
+            queryIdentities();
+      }, DATA_REFRESH_INTERVAL * 1000);
     };
 
     function queryIdentities() {
