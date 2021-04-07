@@ -95,6 +95,7 @@ public class CommonFilter implements Filter {
             // in the UrlCleaner implementation.
             if (!StringUtil.isEmpty(target)) {
                 // Parse the request origin using registered origin parser.
+                // zhengxgs@parseOrigin() 方法使用时需要谨慎.不能使用IP或者其他大范围无法评估的origin.不然将导致内存溢出
                 String origin = parseOrigin(sRequest);
                 String contextName = webContextUnify ? WebServletConfig.WEB_SERVLET_CONTEXT_NAME : target;
                 ContextUtil.enter(contextName, origin);
