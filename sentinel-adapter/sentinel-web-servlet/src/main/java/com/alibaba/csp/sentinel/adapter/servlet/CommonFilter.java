@@ -96,6 +96,8 @@ public class CommonFilter implements Filter {
             if (!StringUtil.isEmpty(target)) {
                 // Parse the request origin using registered origin parser.
                 // zhengxgs@parseOrigin() 方法使用时需要谨慎.不能使用IP或者其他大范围无法评估的origin.不然将导致内存溢出
+                // 注意来源数目不能太多，若太多请自定义埋点作为参数传入并使用热点规则。
+                // https://github.com/alibaba/Sentinel/wiki/%E4%B8%BB%E6%B5%81%E6%A1%86%E6%9E%B6%E7%9A%84%E9%80%82%E9%85%8D#spring-cloud
                 String origin = parseOrigin(sRequest);
                 String contextName = webContextUnify ? WebServletConfig.WEB_SERVLET_CONTEXT_NAME : target;
                 ContextUtil.enter(contextName, origin);
