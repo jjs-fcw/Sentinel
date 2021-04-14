@@ -53,8 +53,8 @@
 
         <!-- Build -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <java.source.version>1.7</java.source.version>
-        <java.target.version>1.7</java.target.version>
+        <java.source.version>1.8</java.source.version>
+        <java.target.version>1.8</java.target.version>
         <java.encoding>UTF-8</java.encoding>
         <maven.compiler.version>3.8.0</maven.compiler.version>
         <maven.surefire.version>2.22.1</maven.surefire.version>
@@ -373,6 +373,7 @@
                 </plugins>
             </build>
 
+            <!--
             <distributionManagement>
                 <snapshotRepository>
                     <id>oss</id>
@@ -383,21 +384,18 @@
                     <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
                 </repository>
             </distributionManagement>
-
-            <!--
-            <distributionManagement>
-                <repository>
-                    <id>releases</id>
-                    <url>http://172.16.5.251:8081/nexus/content/repositories/jjsrespo</url>
-                </repository>
-                <snapshotRepository>
-                    <id>snapshots</id>
-                    <url>http://172.16.5.251:8081/nexus/content/repositories/snapshots</url>
-                </snapshotRepository>
-            </distributionManagement>
             -->
-
         </profile>
     </profiles>
+    <distributionManagement>
+        <repository>
+            <id>releases</id>
+            <url>http://172.16.5.251:8081/nexus/content/repositories/jjsrespo</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots</id>
+            <url>http://172.16.5.251:8081/nexus/content/repositories/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 </project>
