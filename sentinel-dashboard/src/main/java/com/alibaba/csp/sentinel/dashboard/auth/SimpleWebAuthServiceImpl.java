@@ -15,12 +15,12 @@
  */
 package com.alibaba.csp.sentinel.dashboard.auth;
 
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 /**
  * @author cdfive
@@ -47,19 +47,21 @@ public class SimpleWebAuthServiceImpl implements AuthService<HttpServletRequest>
     public static final class SimpleWebAuthUserImpl implements AuthUser {
 
         private String username;
+        private List<String> apps;
 
-        public SimpleWebAuthUserImpl(String username) {
+        public SimpleWebAuthUserImpl(String username, List<String> apps) {
             this.username = username;
+            this.apps = apps;
         }
 
         @Override
         public boolean authTarget(String target, PrivilegeType privilegeType) {
-            return true;
+            return hasPermission(target);
         }
 
         @Override
         public boolean isSuperUser() {
-            return true;
+            return "admin".equals(username);
         }
 
         @Override
@@ -75,6 +77,11 @@ public class SimpleWebAuthServiceImpl implements AuthService<HttpServletRequest>
         @Override
         public String getId() {
             return username;
+        }
+
+        @Override
+        public boolean hasPermission(String app) {
+            return isSuperUser() || apps.contains(app);
         }
     }
 }

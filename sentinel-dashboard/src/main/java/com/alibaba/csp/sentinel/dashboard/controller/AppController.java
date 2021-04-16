@@ -15,18 +15,19 @@
  */
 package com.alibaba.csp.sentinel.dashboard.controller;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.alibaba.csp.sentinel.dashboard.auth.AuthService;
+import com.alibaba.csp.sentinel.dashboard.auth.AuthService.AuthUser;
 import com.alibaba.csp.sentinel.dashboard.discovery.AppInfo;
 import com.alibaba.csp.sentinel.dashboard.discovery.AppManagement;
 import com.alibaba.csp.sentinel.dashboard.discovery.MachineInfo;
 import com.alibaba.csp.sentinel.dashboard.domain.Result;
 import com.alibaba.csp.sentinel.dashboard.domain.vo.MachineInfoVo;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,6 +45,10 @@ public class AppController {
     @Autowired
     private AppManagement appManagement;
 
+    @Autowired
+    private AuthService<HttpServletRequest> authService;
+
+
     @GetMapping("/names.json")
     public Result<List<String>> queryApps(HttpServletRequest request) {
         return Result.ofSuccess(appManagement.getAppNames());
@@ -51,7 +56,9 @@ public class AppController {
 
     @GetMapping("/briefinfos.json")
     public Result<List<AppInfo>> queryAppInfos(HttpServletRequest request) {
+        AuthUser authUser = authService.getAuthUser(request);
         List<AppInfo> list = new ArrayList<>(appManagement.getBriefApps());
+        list = list.stream().filter(appInfo -> authUser.hasPermission(appInfo.getApp())).collect(Collectors.toList());
         Collections.sort(list, Comparator.comparing(AppInfo::getApp));
         return Result.ofSuccess(list);
     }

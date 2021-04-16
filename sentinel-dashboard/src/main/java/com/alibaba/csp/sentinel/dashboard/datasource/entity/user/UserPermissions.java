@@ -1,0 +1,70 @@
+package com.alibaba.csp.sentinel.dashboard.datasource.entity.user;
+
+import java.io.Serializable;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.Table;
+
+/**
+ * Created by @author:zhengxgs on 2021/4/14.
+ */
+@Entity
+@Table(name = "sentinel_permissions")
+public class UserPermissions implements Serializable {
+
+    @Id
+    @GeneratedValue
+    @Column(name = "id")
+    private Integer id;
+
+    /**
+     * 登录账号
+     */
+    @Column(name = "user_name")
+    private String userName;
+
+    /**
+     * 对应工号
+     */
+    @Column(name = "worker_id")
+    private String workerId;
+    /**
+     * 应用名称
+     */
+    @Column(name = "app")
+    private String app;
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getWorkerId() {
+        return workerId;
+    }
+
+    public void setWorkerId(String workerId) {
+        this.workerId = workerId;
+    }
+
+    public String getApp() {
+        return app;
+    }
+
+    public void setApp(String app) {
+        this.app = app;
+    }
+}

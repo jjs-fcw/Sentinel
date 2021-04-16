@@ -77,7 +77,7 @@
 
         <module>sentinel-dashboard</module>
 
-        <module>sentinel-demo</module>
+<!--        <module>sentinel-demo</module>-->
         <module>sentinel-benchmark</module>
 
     </modules>
@@ -276,6 +276,7 @@
                     <useSystemClassLoader>false</useSystemClassLoader>
                 </configuration>
             </plugin>
+            <!--
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
@@ -295,6 +296,7 @@
                     </execution>
                 </executions>
             </plugin>
+            -->
         </plugins>
         <pluginManagement>
             <plugins>

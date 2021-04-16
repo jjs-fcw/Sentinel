@@ -109,5 +109,10 @@ public interface AuthService<R> {
          * @return ID of current user
          */
         String getId();
+
+        /**
+         * has permission
+         * */
+        boolean hasPermission(String app);
     }
 }

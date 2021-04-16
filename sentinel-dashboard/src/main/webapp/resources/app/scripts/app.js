@@ -364,5 +364,21 @@ angular
                   });
               }]
           }
+      })
+
+      .state('dashboard.quanxian', {
+          url: '/quanxian',
+          templateUrl: 'app/views/quanxian.html',
+          controller: 'QuanxianCtl',
+          resolve: {
+              loadMyFiles: ['$ocLazyLoad', function ($ocLazyLoad) {
+                  return $ocLazyLoad.load({
+                      name: 'sentinelDashboardApp',
+                      files: [
+                          'app/scripts/controllers/quanxian.js',
+                      ]
+                  });
+              }]
+          }
       });
   }]);

@@ -61,5 +61,10 @@ public class FakeAuthServiceImpl implements AuthService<HttpServletRequest> {
         public String getId() {
             return "FAKE_EMP_ID";
         }
+
+        @Override
+        public boolean hasPermission(String app) {
+            return false;
+        }
     }
 }

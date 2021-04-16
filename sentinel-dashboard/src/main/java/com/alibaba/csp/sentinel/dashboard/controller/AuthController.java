@@ -18,7 +18,17 @@ package com.alibaba.csp.sentinel.dashboard.controller;
 import com.alibaba.csp.sentinel.dashboard.auth.AuthService;
 import com.alibaba.csp.sentinel.dashboard.auth.SimpleWebAuthServiceImpl;
 import com.alibaba.csp.sentinel.dashboard.config.DashboardConfig;
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.user.User;
+import com.alibaba.csp.sentinel.dashboard.datasource.entity.user.UserPermissions;
 import com.alibaba.csp.sentinel.dashboard.domain.Result;
+import com.alibaba.csp.sentinel.dashboard.repository.user.UserPermissionsRepositoryAdapter;
+import com.alibaba.csp.sentinel.dashboard.repository.user.UserRepositoryAdapter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,8 +37,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author cdfive
@@ -49,28 +57,50 @@ public class AuthController {
     @Autowired
     private AuthService<HttpServletRequest> authService;
 
+    @Autowired
+    private UserRepositoryAdapter<User> userStore;
+    @Autowired
+    private UserPermissionsRepositoryAdapter<UserPermissions> permissionsStore;
+    @Value("${auth.use.type:nc}")
+    private String authUseType;
+
+
     @PostMapping("/login")
     public Result<AuthService.AuthUser> login(HttpServletRequest request, String username, String password) {
-        if (StringUtils.isNotBlank(DashboardConfig.getAuthUsername())) {
-            authUsername = DashboardConfig.getAuthUsername();
+        if (fromMysql()) {
+            User user = userStore.selectByUserName(username);
+            if (Objects.isNull(user)) {
+                return Result.ofFail(-1, "Invalid username or password");
+            }
+            authUsername = user.getUserName();
+            authPassword = user.getPwd();
+        } else {
+            if (StringUtils.isNotBlank(DashboardConfig.getAuthUsername())) {
+                authUsername = DashboardConfig.getAuthUsername();
+            }
+            if (StringUtils.isNotBlank(DashboardConfig.getAuthPassword())) {
+                authPassword = DashboardConfig.getAuthPassword();
+            }
         }
-
-        if (StringUtils.isNotBlank(DashboardConfig.getAuthPassword())) {
-            authPassword = DashboardConfig.getAuthPassword();
-        }
-
         /*
          * If auth.username or auth.password is blank(set in application.properties or VM arguments),
          * auth will pass, as the front side validate the input which can't be blank,
          * so user can input any username or password(both are not blank) to login in that case.
          */
         if (StringUtils.isNotBlank(authUsername) && !authUsername.equals(username)
-                || StringUtils.isNotBlank(authPassword) && !authPassword.equals(password)) {
+            || StringUtils.isNotBlank(authPassword) && !authPassword.equals(password)) {
             LOGGER.error("Login failed: Invalid username or password, username=" + username);
             return Result.ofFail(-1, "Invalid username or password");
         }
 
-        AuthService.AuthUser authUser = new SimpleWebAuthServiceImpl.SimpleWebAuthUserImpl(username);
+        UserPermissions query = new UserPermissions();
+        if (fromMysql()) {
+            query.setUserName(username);
+        }
+        List<UserPermissions> userPermissions = permissionsStore.selectList(query);
+        List<String> apps = Optional.ofNullable(userPermissions).orElse(new ArrayList<>()).stream().map(UserPermissions::getApp)
+            .collect(Collectors.toList());
+        AuthService.AuthUser authUser = new SimpleWebAuthServiceImpl.SimpleWebAuthUserImpl(username, apps);
         request.getSession().setAttribute(SimpleWebAuthServiceImpl.WEB_SESSION_KEY, authUser);
         return Result.ofSuccess(authUser);
     }
@@ -88,5 +118,12 @@ public class AuthController {
             return Result.ofFail(-1, "Not logged in");
         }
         return Result.ofSuccess(authUser);
+    }
+
+    private boolean fromMysql() {
+        if (StringUtils.isNotBlank(authUseType) && authUseType.equals("mysql")) {
+            return true;
+        }
+        return false;
     }
 }
