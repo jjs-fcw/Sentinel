@@ -73,7 +73,7 @@ public class AuthController {
                 return Result.ofFail(-1, "Invalid username or password");
             }
             authUsername = user.getUserName();
-            authPassword = user.getPwd();
+            authPassword = user.getUserPwd();
         } else {
             if (StringUtils.isNotBlank(DashboardConfig.getAuthUsername())) {
                 authUsername = DashboardConfig.getAuthUsername();

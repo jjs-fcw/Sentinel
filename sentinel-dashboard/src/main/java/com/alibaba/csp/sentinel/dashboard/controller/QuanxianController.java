@@ -8,6 +8,7 @@ import com.alibaba.csp.sentinel.dashboard.domain.Result;
 import com.alibaba.csp.sentinel.dashboard.domain.vo.user.UserVo;
 import com.alibaba.csp.sentinel.dashboard.repository.user.UserPermissionsRepositoryAdapter;
 import com.alibaba.csp.sentinel.dashboard.repository.user.UserRepositoryAdapter;
+import com.gitee.baa.list2.Lists2;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -75,7 +76,7 @@ public class QuanxianController {
         try {
             User user = new User();
             user.setUserName(entity.getUserName());
-            user.setPwd(entity.getPwd());
+            user.setUserPwd(entity.getUserPwd());
             user.setNickName(entity.getNickName());
             userStore.save(user);
             permissionsStore.deleteByUserName(entity.getUserName());
@@ -105,12 +106,13 @@ public class QuanxianController {
             User user = new User();
             user.setId(entity.getId());
             user.setUserName(entity.getUserName());
-            user.setPwd(entity.getPwd());
+            user.setUserPwd(entity.getUserPwd());
             user.setNickName(entity.getNickName());
             userStore.update(user);
 
             permissionsStore.deleteByUserName(entity.getUserName());
-            for (String app : entity.getApps().split(",")) {
+            List<String> split = Lists2.splitWithTrim(entity.getApps());
+            for (String app : split) {
                 UserPermissions userPermissions = new UserPermissions();
                 userPermissions.setApp(app);
                 userPermissions.setUserName(entity.getUserName());

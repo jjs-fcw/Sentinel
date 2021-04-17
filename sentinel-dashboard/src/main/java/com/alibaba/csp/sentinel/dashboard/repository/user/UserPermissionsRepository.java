@@ -3,10 +3,10 @@ package com.alibaba.csp.sentinel.dashboard.repository.user;
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.user.UserPermissions;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +17,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository("userPermissionsRepository")
 public class UserPermissionsRepository extends UserPermissionsRepositoryAdapter<UserPermissions> {
 
-    @PersistenceContext
-    private EntityManager em;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     public void save(UserPermissions userPermissions) {
-        em.persist(userPermissions);
+        String sql = "insert into sentinel_permissions(user_name,worker_id,app) values (?,?,?)";
+        jdbcTemplate.update(sql, userPermissions.getUserName(), userPermissions.getWorkerId(), userPermissions.getApp());
     }
 
     @Override
@@ -32,62 +33,41 @@ public class UserPermissionsRepository extends UserPermissionsRepositoryAdapter<
 
     @Override
     public UserPermissions select(Integer id) {
-        StringBuilder hql = new StringBuilder();
-        hql.append("select id,userName,workerId,app FROM UserPermissions WHERE id=:id");
-        Query query = em.createQuery(hql.toString());
-        query.setParameter("id", id);
-        Object singleResult = query.getSingleResult();
-        if (Objects.nonNull(singleResult)) {
-            Object[] entity = (Object[]) singleResult;
-            UserPermissions permissions = new UserPermissions();
-            permissions.setId(Integer.parseInt(entity[0].toString()));
-            permissions.setUserName(String.valueOf(entity[1]));
-            permissions.setWorkerId(String.valueOf(entity[2]));
-            permissions.setApp(String.valueOf(entity[3]));
-            return permissions;
+        try {
+            return jdbcTemplate
+                .queryForObject("select * from sentinel_permissions where id = ?", new BeanPropertyRowMapper<>(UserPermissions.class), id);
+        } catch (DataAccessException e) {
+            return null;
         }
-        return null;
     }
 
     @Override
     public List<UserPermissions> selectList(UserPermissions permissions) {
-        StringBuilder hql = new StringBuilder();
-        hql.append(" select id,userName,workerId,app FROM UserPermissions ");
-        hql.append(" WHERE 1=1");
+        List<Object> list = new ArrayList<>();
+        StringBuilder sql = new StringBuilder("select * from sentinel_permissions where 1=1");
         if (permissions.getUserName() != null) {
-            hql.append(" and userName=:userName");
+            sql.append(" and user_name=?");
+            list.add(permissions.getUserName());
         }
-        Query query = em.createQuery(hql.toString());
-        if (permissions.getUserName() != null) {
-            query.setParameter("userName", permissions.getUserName());
-        }
-
-        List<UserPermissions> results = new ArrayList<>();
-        List<Object[]> list = query.getResultList();
-        if (list != null) {
-            for (Object[] objects : list) {
-                UserPermissions userPermissions = new UserPermissions();
-                userPermissions.setId(Integer.parseInt(objects[0].toString()));
-                userPermissions.setUserName(String.valueOf(objects[1]));
-                userPermissions.setWorkerId(String.valueOf(objects[2]));
-                userPermissions.setApp(String.valueOf(objects[3]));
-                results.add(userPermissions);
-            }
-        }
-        return results;
+        return this.jdbcTemplate.query(sql.toString(), list.toArray(), (resultSet, i) -> {
+            UserPermissions userPermissions = new UserPermissions();
+            userPermissions.setId(resultSet.getInt("id"));
+            userPermissions.setUserName(resultSet.getString("user_name"));
+            userPermissions.setWorkerId(resultSet.getString("worker_id"));
+            userPermissions.setApp(resultSet.getString("app"));
+            return userPermissions;
+        });
     }
 
     @Override
     public void update(UserPermissions permissions) {
-        em.merge(permissions);
+        String sql = "update sentinel_permissions set user_name=?, worker_id=?, app=? where id=?";
+        this.jdbcTemplate.update(sql, permissions.getUserName(), permissions.getWorkerId(), permissions.getApp(), permissions.getId());
     }
 
     @Override
     public int deleteByUserName(String userName) {
-        StringBuilder hql = new StringBuilder();
-        hql.append("DELETE FROM UserPermissions WHERE userName=:userName");
-        Query query = em.createQuery(hql.toString());
-        query.setParameter("userName", userName);
-        return query.executeUpdate();
+        String sql = "delete from sentinel_permissions where user_name=?";
+        return this.jdbcTemplate.update(sql, userName);
     }
 }

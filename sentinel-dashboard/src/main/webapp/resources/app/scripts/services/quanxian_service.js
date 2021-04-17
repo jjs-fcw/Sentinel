@@ -26,7 +26,7 @@ app.service('QuanxianService', ['$http', function ($http) {
     var param = {
         id: rule.id,
         userName: rule.userName,
-        pwd: rule.pwd,
+        userPwd: rule.userPwd,
         nickName: rule.nickName,
         apps: rule.apps,
     };
@@ -49,7 +49,7 @@ app.service('QuanxianService', ['$http', function ($http) {
           alert('用户名不能为空');
           return false;
       }
-      if (rule.pwd === undefined || rule.pwd === '') {
+      if (rule.userPwd === undefined || rule.userPwd === '') {
           alert('密码不能为空');
           return false;
       }

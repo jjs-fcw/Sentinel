@@ -1,0 +1,7 @@
+knife-datasource:
+  test:
+    type: mysql
+    url: jdbc:mysql://172.16.4.31:6033/jjsfang?useUnicode=true&autoReconnect=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+    username: root
+    password: passwd4_31
+    read: true

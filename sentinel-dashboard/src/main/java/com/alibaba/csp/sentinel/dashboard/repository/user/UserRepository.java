@@ -1,12 +1,11 @@
 package com.alibaba.csp.sentinel.dashboard.repository.user;
 
 import com.alibaba.csp.sentinel.dashboard.datasource.entity.user.User;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,12 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Repository("userRepository")
 public class UserRepository extends UserRepositoryAdapter<User> {
 
-    @PersistenceContext
-    private EntityManager em;
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     @Override
     public void save(User user) {
-        em.persist(user);
+        String sql = "insert into sentinel_user(user_name,user_pwd,nick_name) values (?,?,?)";
+        jdbcTemplate.update(sql, user.getUserName(), user.getUserPwd(), user.getNickName());
     }
 
     @Override
@@ -32,75 +32,49 @@ public class UserRepository extends UserRepositoryAdapter<User> {
 
     @Override
     public User select(Integer id) {
-        StringBuilder hql = new StringBuilder();
-        hql.append("select id,userName,pwd,nickName FROM User WHERE id=:id");
-        Query query = em.createQuery(hql.toString());
-        query.setParameter("id", id);
-        Object singleResult = query.getSingleResult();
-        if (Objects.nonNull(singleResult)) {
-            Object[] entity = (Object[]) singleResult;
-            User user = new User();
-            user.setId(Integer.parseInt(entity[0].toString()));
-            user.setUserName(String.valueOf(entity[1]));
-            user.setPwd(String.valueOf(entity[2]));
-            user.setNickName(String.valueOf(entity[3]));
-            return user;
+//        User user = new User();
+//        String sql="select * from sentinel_user where id = ?";
+//        Object[] arr = new Object[]{id};
+//        this.jdbcTemplate.query(sql, arr, resultSet -> {
+//            user.setId(resultSet.getInt("id"));
+//            user.setUserName(resultSet.getString("user_name"));
+//            user.setPwd(resultSet.getString("user_pwd"));
+//            user.setNickName(resultSet.getString("nick_name"));
+//        });
+//        if (user.getId() != null) {
+//            return user;
+//        }
+//        return null;
+        try {
+            return jdbcTemplate.queryForObject("select * from sentinel_user where id = ?", new BeanPropertyRowMapper<>(User.class), id);
+        } catch (DataAccessException e) {
+            return null;
         }
-        return null;
     }
 
     @Override
-    public List<User> selectList(User user) {
-        StringBuilder hql = new StringBuilder();
-        hql.append("select id,userName,pwd,nickName FROM User");
-        Query query = em.createQuery(hql.toString());
-
-        List<User> results = new ArrayList<>();
-        List<Object[]> list = query.getResultList();
-        if (list != null) {
-            for (Object[] entity : list) {
-                User u = new User();
-                u.setId(Integer.parseInt(entity[0].toString()));
-                u.setUserName(String.valueOf(entity[1]));
-                u.setPwd(String.valueOf(entity[2]));
-                u.setNickName(String.valueOf(entity[3]));
-                results.add(u);
-            }
-        }
-        return results;
+    public List<User> selectList(User query) {
+        return jdbcTemplate.query("select * from sentinel_user", new BeanPropertyRowMapper(User.class));
     }
 
     @Override
     public void update(User user) {
-        em.merge(user);
-
+        String sql = "update sentinel_user set user_name=?, user_pwd=?, nick_name=? where id=?";
+        this.jdbcTemplate.update(sql, user.getUserName(), user.getUserPwd(), user.getNickName(), user.getId());
     }
 
     @Override
     public int delete(Integer id) {
-        StringBuilder hql = new StringBuilder();
-        hql.append("DELETE FROM User WHERE id=:id");
-        Query query = em.createQuery(hql.toString());
-        query.setParameter("id", id);
-        return query.executeUpdate();
+        String sql = "delete from sentinel_user where id=?";
+        return this.jdbcTemplate.update(sql, id);
     }
 
     @Override
     public User selectByUserName(String userName) {
-        StringBuilder hql = new StringBuilder();
-        hql.append("select id,userName,pwd,nickName FROM User WHERE userName=:userName");
-        Query query = em.createQuery(hql.toString());
-        query.setParameter("userName", userName);
-        Object singleResult = query.getSingleResult();
-        if (Objects.nonNull(singleResult)) {
-            Object[] entity = (Object[]) singleResult;
-            User user = new User();
-            user.setId(Integer.parseInt(entity[0].toString()));
-            user.setUserName(String.valueOf(entity[1]));
-            user.setPwd(String.valueOf(entity[2]));
-            user.setNickName(String.valueOf(entity[3]));
-            return user;
+        try {
+            return jdbcTemplate.queryForObject("select * from sentinel_user where user_name = ?", new BeanPropertyRowMapper<>(User.class), userName);
+        } catch (DataAccessException e) {
+            return null;
         }
-        return null;
     }
 }

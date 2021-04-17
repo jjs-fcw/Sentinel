@@ -1,31 +1,17 @@
 package com.alibaba.csp.sentinel.dashboard.datasource.entity.user;
 
+import com.gitee.baa.annotation.Table;
 import java.io.Serializable;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
 /**
  * Created by @author:zhengxgs on 2021/4/14.
  */
-@Entity
-@Table(name = "sentinel_user")
+@Table("sentinel_user")
 public class User implements Serializable {
 
-    @Id
-    @GeneratedValue
-    @Column(name = "id")
     private Integer id;
-
-    @Column(name = "user_name")
     private String userName;
-
-    @Column(name = "user_pwd")
-    private String pwd;
-
-    @Column(name = "nick_name")
+    private String userPwd;
     private String nickName;
 
     public Integer getId() {
@@ -44,12 +30,12 @@ public class User implements Serializable {
         this.userName = userName;
     }
 
-    public String getPwd() {
-        return pwd;
+    public String getUserPwd() {
+        return userPwd;
     }
 
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
+    public void setUserPwd(String userPwd) {
+        this.userPwd = userPwd;
     }
 
     public String getNickName() {

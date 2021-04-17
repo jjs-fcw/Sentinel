@@ -12,7 +12,7 @@ public class UserVo implements Serializable {
 
     private Integer id;
     private String userName;
-    private String pwd;
+    private String userPwd;
     private String nickName;
     private String apps;
 
@@ -28,7 +28,7 @@ public class UserVo implements Serializable {
         UserVo vo = new UserVo();
         vo.setId(user.getId());
         vo.setUserName(user.getUserName());
-        vo.setPwd(user.getPwd());
+        vo.setUserPwd(user.getUserPwd());
         vo.setNickName(user.getNickName());
         return vo;
     }
@@ -49,12 +49,12 @@ public class UserVo implements Serializable {
         this.userName = userName;
     }
 
-    public String getPwd() {
-        return pwd;
+    public String getUserPwd() {
+        return userPwd;
     }
 
-    public void setPwd(String pwd) {
-        this.pwd = pwd;
+    public void setUserPwd(String userPwd) {
+        this.userPwd = userPwd;
     }
 
     public String getNickName() {
