@@ -8,7 +8,6 @@ import com.alibaba.csp.sentinel.dashboard.domain.Result;
 import com.alibaba.csp.sentinel.dashboard.domain.vo.user.UserVo;
 import com.alibaba.csp.sentinel.dashboard.repository.user.UserPermissionsRepositoryAdapter;
 import com.alibaba.csp.sentinel.dashboard.repository.user.UserRepositoryAdapter;
-import com.gitee.baa.list2.Lists2;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -29,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Created by @author:zhengxgs on 2021/4/15.
  */
 @RestController
-@RequestMapping("/quanxian")
+@RequestMapping("/authorityManagement")
 public class QuanxianController {
 
     private final Logger logger = LoggerFactory.getLogger(QuanxianController.class);
@@ -111,8 +110,7 @@ public class QuanxianController {
             userStore.update(user);
 
             permissionsStore.deleteByUserName(entity.getUserName());
-            List<String> split = Lists2.splitWithTrim(entity.getApps());
-            for (String app : split) {
+            for (String app : entity.getApps().split(",")) {
                 UserPermissions userPermissions = new UserPermissions();
                 userPermissions.setApp(app);
                 userPermissions.setUserName(entity.getUserName());

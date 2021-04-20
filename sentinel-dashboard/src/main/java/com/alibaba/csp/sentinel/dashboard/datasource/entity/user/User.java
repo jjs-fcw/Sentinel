@@ -1,12 +1,10 @@
 package com.alibaba.csp.sentinel.dashboard.datasource.entity.user;
 
-import com.gitee.baa.annotation.Table;
 import java.io.Serializable;
 
 /**
  * Created by @author:zhengxgs on 2021/4/14.
  */
-@Table("sentinel_user")
 public class User implements Serializable {
 
     private Integer id;

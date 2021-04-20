@@ -57,8 +57,8 @@ const JS_APP = [
   'app/scripts/services/authority_service.js',
   'app/scripts/services/cluster_state_service.js',
   'app/scripts/services/gateway/api_service.js',
+  'app/scripts/services/qx_service.js',
   'app/scripts/services/gateway/flow_service.js',
-  'app/scripts/services/quanxian_service.js',
 ];
 
 gulp.task('lib', function () {

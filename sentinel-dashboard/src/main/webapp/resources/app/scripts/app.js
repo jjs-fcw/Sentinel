@@ -350,6 +350,22 @@ angular
         }
       })
 
+      .state('dashboard.authorityManagement', {
+          url: '/authorityManagement',
+          templateUrl: 'app/views/quanxian.html',
+          controller: 'QuanxianCtl',
+          resolve: {
+              loadMyFiles: ['$ocLazyLoad', function ($ocLazyLoad) {
+                  return $ocLazyLoad.load({
+                      name: 'sentinelDashboardApp',
+                      files: [
+                          'app/scripts/controllers/quanxian.js',
+                      ]
+                  });
+              }]
+          }
+      })
+
       .state('dashboard.gatewayFlow', {
           templateUrl: 'app/views/gateway/flow.html',
           url: '/gateway/flow/:app',
@@ -360,22 +376,6 @@ angular
                       name: 'sentinelDashboardApp',
                       files: [
                           'app/scripts/controllers/gateway/flow.js',
-                      ]
-                  });
-              }]
-          }
-      })
-
-      .state('dashboard.quanxian', {
-          url: '/quanxian',
-          templateUrl: 'app/views/quanxian.html',
-          controller: 'QuanxianCtl',
-          resolve: {
-              loadMyFiles: ['$ocLazyLoad', function ($ocLazyLoad) {
-                  return $ocLazyLoad.load({
-                      name: 'sentinelDashboardApp',
-                      files: [
-                          'app/scripts/controllers/quanxian.js',
                       ]
                   });
               }]

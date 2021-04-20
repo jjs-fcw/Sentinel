@@ -1,7 +1,7 @@
 var app = angular.module('sentinelDashboardApp');
 
-app.controller('QuanxianCtl', ['$scope', '$stateParams', 'QuanxianService', 'ngDialog', 'MachineService',
-  function ($scope, $stateParams, QuanxianService, ngDialog, MachineService) {
+app.controller('QuanxianCtl', ['$scope', '$stateParams', 'AuthorityManagement', 'ngDialog', 'MachineService',
+  function ($scope, $stateParams, AuthorityManagement, ngDialog, MachineService) {
     //初始化
     $scope.app = $stateParams.app;
     $scope.rulesPageConfig = {
@@ -12,7 +12,7 @@ app.controller('QuanxianCtl', ['$scope', '$stateParams', 'QuanxianService', 'ngD
     };
     getMachineRules();
     function getMachineRules() {
-      QuanxianService.queryMachineRules("app", "A", "B").success(
+      AuthorityManagement.queryMachineRules("app", "A", "B").success(
         function (data) {
           if (data.code == 0 && data.data) {
             $scope.rules = data.data;
@@ -62,7 +62,7 @@ app.controller('QuanxianCtl', ['$scope', '$stateParams', 'QuanxianService', 'ngD
     };
 
     $scope.saveRule = function () {
-      if (!QuanxianService.checkRuleValid($scope.currentRule)) {
+      if (!AuthorityManagement.checkRuleValid($scope.currentRule)) {
         return;
       }
       if ($scope.degradeRuleDialog.type === 'add') {
@@ -111,7 +111,7 @@ app.controller('QuanxianCtl', ['$scope', '$stateParams', 'QuanxianService', 'ngD
     };
 
     function deleteRule(rule) {
-      QuanxianService.deleteRule(rule).success(function (data) {
+      AuthorityManagement.deleteRule(rule).success(function (data) {
         if (data.code == 0) {
           getMachineRules();
           confirmDialog.close();
@@ -122,7 +122,7 @@ app.controller('QuanxianCtl', ['$scope', '$stateParams', 'QuanxianService', 'ngD
     };
 
     function addNewRule(rule) {
-      QuanxianService.newRule(rule).success(function (data) {
+      AuthorityManagement.newRule(rule).success(function (data) {
         if (data.code == 0) {
           getMachineRules();
           degradeRuleDialog.close();
@@ -133,7 +133,7 @@ app.controller('QuanxianCtl', ['$scope', '$stateParams', 'QuanxianService', 'ngD
     };
 
     function saveRule(rule, edit) {
-      QuanxianService.saveRule(rule).success(function (data) {
+      AuthorityManagement.saveRule(rule).success(function (data) {
         if (data.code == 0) {
           getMachineRules();
           if (edit) {

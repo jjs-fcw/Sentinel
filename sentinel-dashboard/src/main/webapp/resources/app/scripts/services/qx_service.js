@@ -1,6 +1,6 @@
 var app = angular.module('sentinelDashboardApp');
 
-app.service('QuanxianService', ['$http', function ($http) {
+app.service('AuthorityManagement', ['$http', function ($http) {
   this.queryMachineRules = function (app, ip, port) {
     var param = {
       app: app,
@@ -8,7 +8,7 @@ app.service('QuanxianService', ['$http', function ($http) {
       port: port
     };
     return $http({
-      url: '/quanxian/user.json',
+      url: '/authorityManagement/user.json',
       params: param,
       method: 'GET'
     });
@@ -16,7 +16,7 @@ app.service('QuanxianService', ['$http', function ($http) {
 
   this.newRule = function (rule) {
     return $http({
-        url: '/quanxian/user',
+        url: '/authorityManagement/user',
         data: rule,
         method: 'POST'
     });
@@ -31,7 +31,7 @@ app.service('QuanxianService', ['$http', function ($http) {
         apps: rule.apps,
     };
     return $http({
-        url: '/quanxian/user/' + rule.id,
+        url: '/authorityManagement/user/' + rule.id,
         data: param,
         method: 'PUT'
     });
@@ -39,7 +39,7 @@ app.service('QuanxianService', ['$http', function ($http) {
 
   this.deleteRule = function (rule) {
       return $http({
-          url: '/quanxian/user/' + rule.id,
+          url: '/authorityManagement/user/' + rule.id,
           method: 'DELETE'
       });
   };
